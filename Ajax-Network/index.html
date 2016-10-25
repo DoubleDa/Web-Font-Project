@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Ajax</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=0">
+	<meta charset="utf-8">
+	<script type="text/javascript" src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+	<script type="text/javascript">
+		 //主机地址
+		var host_url="http://www.tngou.net/api/";
+		/*
+		 access_token
+		 */
+		var access_token="795b35l2b8d699cfe1147f835faf93e7";
+		/**
+		 * 显示加载进度条
+		 */
+		function showLoading() {
+			console.log("正在请求……");
+		}
+		/**
+		 * 隐藏加载进度条
+		 */
+		function hideLoading() {
+			console.log("请求结束……");
+		}
+		/**
+		 * 取得健康知识分类，可以通过分类id取得健康知识列表
+		 **/
+		function loadClassifyData() {
+			$.ajax({
+				type: "get",
+				dataType:"jsonp",
+				cache:true,
+				url: host_url+"lore/classify",
+				beforeSend:function (XMLHttpRequest) {
+					showLoading();
+				},
+				success: function(data, textStatus){
+					hideLoading();
+					if(data.status){
+						console.log("size："+data.tngou.length);
+					}
+				},
+				complete:function (XMLHttpRequest, textStatus) {
+					hideLoading();
+				},
+				error: function(){
+					hideLoading();
+					console.log('请求失败！');
+				}
+			});
+		}
+
+		/**
+		 * 取得知识列表，也可以用分类id作为参数
+		 **/
+		 function loadListData() {
+		 	$.ajax({
+		 		type:"get",
+		 		dataType:"jsonp",
+		 		cache:true,
+		 		url:host_url+"lore/list",
+		 		success:function (data, textStatus) {
+		 			if(data.status){
+		 				console.log(data.total);
+		 			}
+		 		},
+		 		error:function () {
+		 			console.log("请求失败！");
+		 		}
+		 	});
+		 }
+
+		 /**
+		  * 取得最新的知识，通过id取得大于该id的知识
+		  **/
+		  function loadNewsData(rows,classify,id) {
+		  	$.ajax({
+		  		type:"get",
+		  		dataType:"jsonp",
+		  		cache:true,
+		  		url:host_url+"lore/news?"+"rows="+rows+"&classify="+classify+"&id="+id,
+		  		success:function (data, textStatus) {
+		  			if(data.status){
+		  				console.log(data.total);
+		  			}
+		  		},
+		  		error:function () {
+		  			console.log("请求失败！");
+		  		}
+		  	});
+		  }
+
+		  /**
+		   * 取得健康知识详情，通过知识id取得该对应详细内容信息
+		   **/
+		   function loadShowData(id) {
+		   		$.ajax({
+		   			type:"get",
+		   			dataType:"jsonp",
+		   			cache:true,
+		   			url:host_url+"lore/show?"+"id="+id,
+		   			success:function (data, textStatus) {
+		   				if(data.status){
+		   					console.log(data.count);
+		   				}
+		   			},
+		   			error:function () {
+		   				console.log("请求失败！");
+		   			}
+		   		});
+		   }
+
+		   /**
+		    * 健康知识搜索接口
+		    **/
+		    function loadSearchData(keyword,name,page,rows,classify,type) {
+		    	$.ajax({
+		    		type:"get",
+		    		dataType:"jsonp",
+		    		cache:true,
+		    		url:host_url+"search?"+"keyword="+keyword+"&name="+name+"&page="+page+"&rows="+rows+"&classify="+classify+"&type="+type,
+		    		success:function (data, textStatus) {
+		    			if(data.status){
+		    				console.log(data.total);
+		    			}
+		    		},
+		    		error:function () {
+		    			console.log("请求失败！");
+		    		}
+		    	});
+		    }
+
+		    /**
+		     * 发布评论
+		     */
+		    function uploadUserComment() {
+		    	$.ajax({
+		    		url: host_url+'memo/add',
+		    		type: 'POST',
+		    		dataType: 'jsonp',
+		    		data: {
+		    			access_token: access_token,
+		    			oid:3,
+		    			otype:'blog',
+		    			title:'发表评论',
+		    			memo:'发表评论的内容'
+		    		},
+		    		beforeSend:function (XMLHttpRequest) {
+		    			showLoading();
+		    		},success:function (data, textStatus) {
+		    			hideLoading();
+		    			if(data.status){
+		    				console.log(data.id);
+		    			}
+		    		},error:function () {
+		    			console.log("请求失败！");
+		    		}
+		    	});
+		    }
+	</script>
+</head>
+<body>
+	<div>
+		<h2>健康知识API列表</h2>
+		<ul>
+			<li>
+				<button type="button" onclick="loadClassifyData()">取得健康知识分类</button>
+			</li>
+			<li>
+				<button type="button" onclick="loadListData()">取得知识列表</button>
+			</li>
+			<li>
+				<button type="button" onclick="loadNewsData(12,1,3)">取得最新的知识</button>
+			</li>
+			<li>
+				<button type="button" onclick="loadShowData(100)">取得健康知识详情</button>
+			</li>
+			<li>
+				<button type="button" onclick="loadSearchData('健康','lore',1,12,1,'title,message')">健康知识搜索接口</button>
+			</li>
+		</ul>
+		<h2>使用post方式操作ajax</h2>
+		<ul>
+			<li>
+				<button type="button" onclick="uploadUserComment()">发布评论</button>
+			</li>
+		</ul>
+	</div>
+</body>
+</html>
